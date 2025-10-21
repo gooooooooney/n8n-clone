@@ -1,9 +1,9 @@
 import { inngest } from '@/inngest/client';
 import prisma from '@/lib/db';
-import { createTRPCRouter, protectedProcedure } from '../init';
+import { createTRPCRouter, premiumProcedure, protectedProcedure } from '../init';
 
 export const appRouter = createTRPCRouter({
-  testAi: protectedProcedure
+  testAi: premiumProcedure
     .mutation(async () => {
       await inngest.send({
         name: "execute/deepseek",
