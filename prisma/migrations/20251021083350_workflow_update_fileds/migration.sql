@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Workflow" ALTER COLUMN "createAt" SET DEFAULT CURRENT_TIMESTAMP;
