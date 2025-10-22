@@ -10,7 +10,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
-import { getKey } from "better-auth/client"
 import { cn } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardTitle } from "./ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
@@ -352,6 +351,7 @@ export const EntityItem = ({
                         align="end"
 
                         onClick={(e) => {
+                          e.preventDefault()
                           e.stopPropagation()
                         }}
                       >
