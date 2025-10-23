@@ -50,6 +50,72 @@ export const workflowsRouter = createTRPCRouter({
         }
       })
     }),
+  update: protectedProcedure
+    .input(z.object({
+      id: z.string(),
+      nodes: z.array(
+        z.object({
+          id: z.string(),
+          type: z.string().nullish(),
+          position: z.object({
+            x: z.number(),
+            y: z.number()
+          }),
+          data: z.record(z.string(), z.any()).optional()
+        })
+      ),
+      edges: z.array(z.object({
+        source: z.string(),
+        target: z.string(),
+        sourceHandle: z.string().nullish(),
+        targetHandle: z.string().nullish(),
+      })),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const { nodes, edges, id } = input;
+      const workflow = await prisma.workflow.findUniqueOrThrow({
+        where: {
+          id, userId: ctx.auth.user.id
+        }
+      })
+      return await prisma.$transaction(async (tx) => {
+        // Delete existing nodes and connections
+        await tx.node.deleteMany({
+          where: { workflowId: id }
+        });
+
+        // Create new nodes
+        await tx.node.createMany({
+          data: nodes.map((node) => ({
+            id: node.id,
+            type: node.type as NodeType,
+            position: node.position,
+            data: node.data || {},
+            workflowId: id,
+            name: node.type || "unknown"
+          }))
+        });
+
+        // Create connections
+        await tx.connection.createMany({
+          data: edges.map((edge) => ({
+            fromNodeId: edge.source,
+            toNodeId: edge.target,
+            fromOutput: edge.sourceHandle || "main",
+            toInput: edge.targetHandle || "main",
+            workflowId: id,
+          }))
+        });
+
+        // Update workflow's updatedAt timestamp
+        await tx.workflow.update({
+          where: { id },
+          data: { updatedAt: new Date() }
+        });
+
+        return workflow;
+      })
+    }),
   getOne: protectedProcedure
     .input(z.object({
       id: z.string()

@@ -8,9 +8,11 @@ import {
   BreadcrumbLink,
   BreadcrumbList, BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
-import { useSuspenseWorkflow, useUpdateWorkflowName } from "@/features/workflows/hooks/use-workflows";
+import { useSuspenseWorkflow, useUpdateWorkflow, useUpdateWorkflowName } from "@/features/workflows/hooks/use-workflows";
 import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { useAtomValue } from "jotai";
+import { editorAtom } from "../store/atoms";
 
 
 export const EditorNameInput = ({
@@ -102,15 +104,29 @@ export const EditorBreadcrumbs = ({ workflowId }: { workflowId: string }) => {
 }
 
 export const EditorSaveButton = ({ workflowId }: { workflowId: string }) => {
+  const editor = useAtomValue(editorAtom);
+
+  const saveWorkflow = useUpdateWorkflow();
+
+  const handleSave = async () => {
+    if (!editor) return;
+    const workflowData = {
+      nodes: editor.getNodes(),
+      edges: editor.getEdges(),
+    };
+    try {
+      await saveWorkflow.mutateAsync({ id: workflowId, ...workflowData });
+    } catch (error) {
+      console.error("Failed to save workflow:", error);
+    }
+  }
+
   return (
     <div className="ml-auto">
       <Button
         size="sm"
-        onClick={() => {
-          // Implement save logic here
-          console.log(`Saving workflow ${workflowId}`);
-        }}
-        disabled={false}
+        onClick={handleSave}
+        disabled={saveWorkflow.isPending}
       >
         <SaveIcon className="size-4" />
         Save
