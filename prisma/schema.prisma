@@ -124,10 +124,10 @@ model Connection {
   toNode   Node   @relation("ToNode", fields: [toNodeId], references: [id], onDelete: Cascade)
 
   fromOutput String @default("main")
-  toOutput   String @default("main")
+  toInput    String @default("main")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([fromNodeId, toNodeId, fromOutput, toOutput])
+  @@unique([fromNodeId, toNodeId, fromOutput, toInput])
 }

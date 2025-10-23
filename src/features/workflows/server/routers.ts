@@ -1,16 +1,24 @@
 import prisma from "@/lib/db";
 import { generateSlug } from 'random-word-slugs';
-
+import type { Node, Edge } from '@xyflow/react';
 import { createTRPCRouter, premiumProcedure, protectedProcedure } from "@/trpc/init";
 import z from 'zod';
 import { PAGINATION } from "@/config/constants";
+import { NodeType } from "@/generated/prisma";
 
 export const workflowsRouter = createTRPCRouter({
   create: premiumProcedure.mutation(({ ctx }) => {
     return prisma.workflow.create({
       data: {
         name: generateSlug(3),
-        userId: ctx.auth.user.id
+        userId: ctx.auth.user.id,
+        nodes: {
+          create: {
+            type: NodeType.INITIAL,
+            position: { x: 0, y: 0 },
+            name: NodeType.INITIAL
+          },
+        },
       }
     })
   }),
@@ -46,13 +54,38 @@ export const workflowsRouter = createTRPCRouter({
     .input(z.object({
       id: z.string()
     }))
-    .query(({ ctx, input }) => {
-      return prisma.workflow.findUniqueOrThrow({
+    .query(async ({ ctx, input }) => {
+      const workflow = await prisma.workflow.findUniqueOrThrow({
         where: {
           id: input.id,
           userId: ctx.auth.user.id
-        }
-      })
+        },
+        include: { nodes: true, connections: true }
+      });
+
+      // Transform server nodes to react-flow compatible nodes
+      const nodes: Node[] = workflow.nodes.map((node) => ({
+        id: node.id,
+        type: node.type,
+        position: node.position as { x: number; y: number },
+        data: (node.data as Record<string, any>) || {},
+      }));
+
+      // Transform server connections to react-flow compatible edges
+      const edges: Edge[] = workflow.connections.map((connection) => ({
+        id: connection.id,
+        source: connection.fromNodeId,
+        target: connection.toNodeId,
+        sourceHandle: connection.fromOutput || undefined,
+        targetHandle: connection.toInput || undefined,
+      }));
+
+      return {
+        id: workflow.id,
+        name: workflow.name,
+        nodes,
+        edges,
+      };
     }),
   getMany: protectedProcedure
     .input(
