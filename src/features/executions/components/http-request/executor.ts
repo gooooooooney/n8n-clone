@@ -3,19 +3,24 @@ import { NonRetriableError } from "inngest";
 import ky, { type Options as KyOptions } from "ky"
 
 type HttpRequestData = {
-    endpoint: string;
+    variableName?: string
+    endpoint?: string;
     method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
     body?: string
 }
 
 export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
-    data, nodeId, context, step
+    data, nodeId, context, step,
 }) => {
     //  TODO: Publish "loading" state from the http request node
 
     if (!data.endpoint) {
         // TODO: Publish "error" state for http request
         throw new NonRetriableError("HTTP Request node: No endpoint configured")
+    }
+    if (!data.variableName) {
+        // TODO: Publish "error" state for http request
+        throw new NonRetriableError("Variable name not configured")
     }
 
     // const result = await step.fetch(data.endpoint)
@@ -24,7 +29,7 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
     const result = await step.run("http-request", async () => {
         const method = data.method || "GET"
 
-        const endpoint = data.endpoint
+        const endpoint = data.endpoint!
 
         const options: KyOptions = {
             method,
@@ -32,6 +37,9 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
 
         if (["POST", "PUT", "PATCH"].includes(method)) {
             options.body = data.body;
+            options.headers = {
+                "Content-type": "application/json"
+            }
         }
 
         const response = await ky(endpoint, options);
@@ -39,13 +47,20 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
 
         const responseData = contentType?.includes("application/json") ? await response.json() : await response.text()
 
-        return {
-            ...context,
+        const reponsePayload = {
+
             httpResponse: {
                 status: response.status,
                 statusText: response.statusText,
                 data: responseData,
             }
+        }
+
+        
+
+        return {
+            ...context,
+            [data.variableName!]: reponsePayload
         }
     })
 

@@ -12,7 +12,8 @@
     "db:migrate": "npx prisma migrate dev",
     "db:reset": "npx prisma migrate reset",
     "db:studio": "npx prisma studio",
-    "dev:all": "mprocs"
+    "dev:all": "mprocs",
+    "next": "next"
   },
   "dependencies": {
     "@ai-sdk/deepseek": "^1.0.23",
