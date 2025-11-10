@@ -49,9 +49,7 @@ interface Props {
   onOpenChange: (open: boolean) => void;
 
   onSubmit?: (values: z.infer<typeof formSchema>) => void;
-  defaultEndpoint?: string;
-  defaultMethod?: "GET" | "POST" | "PUT" | "DELETE";
-  defaultBody?: string;
+  defaultValues?: Partial<HttpRequestFormValues>
 }
 
 export type HttpRequestFormValues = z.infer<typeof formSchema>;
@@ -60,16 +58,14 @@ export const HttpRequestDialog = ({
   open,
   onOpenChange,
   onSubmit,
-  defaultEndpoint = "",
-  defaultMethod = "GET",
-  defaultBody = "",
+  defaultValues,
 }: Props) => {
   const form = useForm<HttpRequestFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      endpoint: defaultEndpoint,
-      method: defaultMethod,
-      body: defaultBody,
+      endpoint: defaultValues?.endpoint || "",
+      method: defaultValues?.method || "GET",
+      body: defaultValues?.body || "",
     },
   });
 
@@ -77,12 +73,12 @@ export const HttpRequestDialog = ({
   useEffect(() => {
     if (open) {
       form.reset({
-        endpoint: defaultEndpoint,
-        method: defaultMethod,
-        body: defaultBody,
+        endpoint: defaultValues?.endpoint || "",
+        method: defaultValues?.method || "GET",
+        body: defaultValues?.body || "",
       });
     }
-  }, [open, defaultEndpoint, defaultMethod, defaultBody, form]);
+  }, [open, defaultValues, form]);
 
   const watchMethod = form.watch("method");
 

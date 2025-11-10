@@ -9,7 +9,6 @@ import { HttpRequestDialog, HttpRequestFormValues } from "./dialog";
 type HttpRequestNodeData = {
   endpoint: string;
   method?: "GET" | "POST" | "PUT" | "DELETE";
-  [key: string]: unknown;
   body?: string
 }
 
@@ -28,9 +27,7 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
           ...n,
           data: {
             ...n.data,
-            endpoint: values.endpoint,
-            method: values.method,
-            body: values.body,
+            ...values,
           }
         }
       }
@@ -55,10 +52,8 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
       <HttpRequestDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        defaultEndpoint={nodeData.endpoint} // TODO check if it can be improved by just sending initialValues={nodeData}
-        defaultMethod={nodeData.method}
-        defaultBody={nodeData.body}
         onSubmit={handleSubmit}
+        defaultValues={nodeData}
       />
       <BaseExecutionNode
         {...props}
