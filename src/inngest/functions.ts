@@ -1,19 +1,26 @@
-import { createDeepSeek } from "@ai-sdk/deepseek";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { generateText } from "ai";
 import { inngest } from "./client";
-import { NonRetriableError } from "inngest";
+import { Context, NonRetriableError } from "inngest";
 import prisma from "@/lib/db";
 import { topologicaSort } from "./utils";
 import { getExecutor } from "@/features/executions/lib/executor-registry";
-import { NodeType } from "@/generated/prisma";
-const google = createGoogleGenerativeAI()
-const deepseek = createDeepSeek()
+import { httpRequestChannel } from "./channels/http-request";
+import { Realtime } from "@inngest/realtime";
+import { manualTriggerChannel } from "./channels/manual-trigger";
 
 export const executeWorkflow = inngest.createFunction(
-  { id: "execute-workflow" },
-  { event: "workflows/execute.workflow" },
-  async ({ event, step }) => {
+  {
+    id: "execute-workflow",
+    retries: 0,
+  },
+  {
+    event: "workflows/execute.workflow",
+    channels: [
+      httpRequestChannel(),
+      manualTriggerChannel()
+    ]
+  },
+  async ({ event, step, publish }: Context & { publish: Realtime.PublishFn }) => {
+
     const workflowId = event.data.workflowId
 
     if (!workflowId) {
@@ -42,6 +49,7 @@ export const executeWorkflow = inngest.createFunction(
         nodeId: node.id,
         context,
         step,
+        publish,
       })
     }
 
