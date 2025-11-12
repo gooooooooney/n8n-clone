@@ -42,7 +42,7 @@ const formSchema = z.object({
       error: "Variable name must start with a letter or underscore and container only letters, numbers, and underscores"
     })
   ,
-  endpoint: z.url({ message: "Please enter a valid URL" }),
+  endpoint: z.string().min(1, { message: "Please enter a valid URL" }),
   method: z.enum(["GET", "POST", "PUT", "PATCH", "DELETE"]),
   body:
     z.string()
@@ -118,7 +118,7 @@ export const HttpRequestDialog = ({
             onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-4 mt-4"
           >
-              <FormField
+            <FormField
               control={form.control}
               name="variableName"
               render={({ field }) => (

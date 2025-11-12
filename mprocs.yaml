@@ -1,4 +1,6 @@
 procs:
+  grok:
+    cmd: ["pnpm", "run", "ngrok:dev"]
   ingest:
     cmd: ["npx", "inngest-cli@latest", "dev"]
   next:
