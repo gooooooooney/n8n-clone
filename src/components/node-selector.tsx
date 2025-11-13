@@ -51,7 +51,25 @@ const executionNodes: NodeTypeOption[] = [
     label: "HTTP Request",
     description: "Makes an HTTP request to a specified URL",
     icon: GlobeIcon
-  }
+  },
+  {
+    type: NodeType.GEMINI,
+    label: "Gemini",
+    description: "Uses Google Gemini to generate text",
+    icon: "/logos/gemini.svg"
+  },
+  {
+    type: NodeType.OPENAI,
+    label: "OpenAI",
+    description: "Uses OpenAI to generate text",
+    icon: "/logos/openai.svg"
+  },
+  {
+    type: NodeType.ANTHROPIC,
+    label: "Anthropic",
+    description: "Uses Anthropic to generate text",
+    icon: "/logos/anthropic.svg"
+  },
 ]
 
 interface NodeSelectorProps extends React.PropsWithChildren {

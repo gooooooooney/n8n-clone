@@ -8,6 +8,9 @@ import { Realtime } from "@inngest/realtime";
 import { manualTriggerChannel } from "./channels/manual-trigger";
 import { googleFormTriggerChannel } from "./channels/google-form-trigger";
 import { stripeTriggerChannel } from "./channels/stripe-trigger";
+import { geminiChannel } from "./channels/gemini";
+import { openaiChannel } from "./channels/openai";
+import { anthropicChannel } from "./channels/anthropic";
 
 export const executeWorkflow = inngest.createFunction(
   {
@@ -21,6 +24,9 @@ export const executeWorkflow = inngest.createFunction(
       manualTriggerChannel(),
       googleFormTriggerChannel(),
       stripeTriggerChannel(),
+      geminiChannel(),
+      openaiChannel(),
+      anthropicChannel(),
     ]
   },
   async ({ event, step, publish }: Context & { publish: Realtime.PublishFn }) => {
