@@ -17,7 +17,7 @@ import React from "react"
 type EntityHeaderProps = {
   title: string
   description?: string
-  newButtonLabel: string
+  newButtonLabel?: string
   disabled?: boolean
   isCreating?: boolean
 } & (
@@ -274,6 +274,7 @@ interface EntityItemProps {
   href: string
   title: string
   subtitle?: string | React.ReactNode
+  titleClassName?: string
   image?: React.ReactNode
   actions?: React.ReactNode
   onRemove?: () => void
@@ -289,7 +290,8 @@ export const EntityItem = ({
   actions,
   onRemove,
   isRemoving,
-  className
+  className,
+  titleClassName
 }: EntityItemProps) => {
 
   const handleRemove = async (e: React.MouseEvent) => {
@@ -318,7 +320,7 @@ export const EntityItem = ({
           <div className="flex items-center gap-3">
             {image}
             <div>
-              <CardTitle className="text-base font-medium">{title}</CardTitle>
+              <CardTitle className={cn("text-base font-medium", titleClassName)}>{title}</CardTitle>
               {
                 subtitle && (
                   <CardDescription className="text-xs">{subtitle}</CardDescription>

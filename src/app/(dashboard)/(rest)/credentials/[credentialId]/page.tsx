@@ -6,14 +6,9 @@ import { HydrateClient } from "@/trpc/server";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
-interface Credential {
-  params: Promise<{
-    credentialId: string;
-  }>
-}
 
 // http://localhost:3000/credentials/123
-const Page = async ({ params }: Credential) => {
+const Page = async ({ params }: PageProps<"/credentials/[credentialId]">) => {
   await requireAuth()
 
   const { credentialId } = await params;

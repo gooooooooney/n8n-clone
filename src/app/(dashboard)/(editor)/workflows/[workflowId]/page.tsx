@@ -7,14 +7,8 @@ import { HydrateClient } from "@/trpc/server";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
-interface Workflow {
-  params: Promise<{
-    workflowId: string;
-  }>
-}
-
 // http://localhost:3000/workflows/123
-const Page = async ({ params }: Workflow) => {
+const Page = async ({ params }: PageProps<"/workflows/[workflowId]">) => {
   await requireAuth()
   const { workflowId } = await params;
 
