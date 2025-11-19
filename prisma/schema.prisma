@@ -94,6 +94,7 @@ enum CredentialType {
   OPENAI
   ANTHROPIC
   GEMINI
+  DEEPSEEK
 }
 
 model Workflow {
@@ -117,6 +118,9 @@ enum NodeType {
   ANTHROPIC
   GEMINI
   OPENAI
+  DEEPSEEK
+  SLACK
+  DISCORD
 }
 
 model Node {

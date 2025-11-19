@@ -1,10 +1,10 @@
 import type { NodeExecutor } from "@/features/executions/type";
 import Handlebars from "handlebars";
-import { createGoogleGenerativeAI } from "@ai-sdk/google"
+import { createDeepSeek } from "@ai-sdk/deepseek"
 import { generateText } from "ai"
-import { geminiChannel } from "@/inngest/channels/gemini";
 import { NonRetriableError } from "inngest";
 import prisma from "@/lib/db";
+import { deepseekChannel } from "@/inngest/channels/deepseek";
 
 Handlebars.registerHelper("json", (ctx) => {
     const jsonString = JSON.stringify(ctx, null, 2)
@@ -12,18 +12,18 @@ Handlebars.registerHelper("json", (ctx) => {
     return safeString
 })
 
-type GeminiData = {
+type DeepseekData = {
     variableName?: string
     credentialId?: string
     userPrompt?: string
     systemPrompt?: string
 }
 
-export const geminiExecutor: NodeExecutor<GeminiData> = async ({
+export const deepseekExecutor: NodeExecutor<DeepseekData> = async ({
     data, nodeId, context, step, publish, userId
 }) => {
     await publish(
-        geminiChannel().status({
+        deepseekChannel().status({
             nodeId,
             status: "loading"
         })
@@ -31,30 +31,30 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
 
     if (!data.variableName) {
         await publish(
-            geminiChannel().status({
+            deepseekChannel().status({
                 nodeId,
                 status: "error"
             })
         )
-        throw new NonRetriableError("Gemini node: Variable name is missing")
+        throw new NonRetriableError("Deepseek node: Variable name is missing")
     }
     if (!data.userPrompt) {
         await publish(
-            geminiChannel().status({
+            deepseekChannel().status({
                 nodeId,
                 status: "error"
             })
         )
-        throw new NonRetriableError("Gemini node: userPrompt is missing")
+        throw new NonRetriableError("Deepseek node: userPrompt is missing")
     }
     if (!data.credentialId) {
         await publish(
-            geminiChannel().status({
+            deepseekChannel().status({
                 nodeId,
                 status: "error"
             })
         )
-        throw new NonRetriableError("Gemini node: credentialId is required")
+        throw new NonRetriableError("Deepseek node: credentialId is required")
     }
 
 
@@ -69,12 +69,12 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
 
     if (!credential) {
         await publish(
-            geminiChannel().status({
+            deepseekChannel().status({
                 nodeId,
                 status: "error"
             })
         )
-        throw new NonRetriableError("Gemini node: credential not found")
+        throw new NonRetriableError("Deepseek node: credential not found")
     }
 
     const systemPrompt = data.systemPrompt
@@ -83,16 +83,16 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
     const userPrompt = Handlebars.compile(data.userPrompt)(context)
 
 
-    const google = createGoogleGenerativeAI({
+    const deepseek = createDeepSeek({
         apiKey: credential.value,
     })
 
     try {
         const { steps } = await step.ai.wrap(
-            "gemini-generate-text",
+            "deepseek-generate-text",
             generateText,
             {
-                model: google("gemini-2.0-flash"),
+                model: deepseek("deepseek-chat"),
                 system: systemPrompt,
                 prompt: userPrompt,
                 experimental_telemetry: {
@@ -109,7 +109,7 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
 
 
         await publish(
-            geminiChannel().status({
+            deepseekChannel().status({
                 nodeId,
                 status: "success"
             })
@@ -123,7 +123,7 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
         }
     } catch (error) {
         await publish(
-            geminiChannel().status({
+            deepseekChannel().status({
                 nodeId,
                 status: "error"
             })

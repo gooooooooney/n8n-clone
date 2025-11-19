@@ -11,6 +11,7 @@ export type NodeExecutorParams<TData = Record<string, unknown>> = {
    context: WorkflowContext
    step: SetpTools
    publish: Realtime.PublishFn
+   userId: string;
 
 }
 

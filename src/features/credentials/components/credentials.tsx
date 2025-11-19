@@ -111,6 +111,7 @@ const credentialLogos: Record<CredentialType, string> = {
   [CredentialType.OPENAI]: "/logos/openai.svg",
   [CredentialType.ANTHROPIC]: "/logos/anthropic.svg",
   [CredentialType.GEMINI]: "/logos/gemini.svg",
+  [CredentialType.DEEPSEEK]: "/logos/deepseek.svg",
 }
 
 export const CredentialItem = ({ credential }: { credential: Omit<Credential, "value" | "userId"> }) => {

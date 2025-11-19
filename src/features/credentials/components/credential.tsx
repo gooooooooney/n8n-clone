@@ -53,6 +53,11 @@ const credentialTypeOptions = [
     label: "Gemini",
     logo: "/logos/gemini.svg"
   },
+  {
+    value: CredentialType.DEEPSEEK,
+    label: "Deepseek",
+    logo: "/logos/deepseek.svg"
+  },
 ]
 
 interface CredentialFormProps {
