@@ -41,23 +41,48 @@ export const LoginForm = () => {
     try {
       await authClient.signIn.email(
         {
-        email: data.email,
-        password: data.password,
-        callbackURL: "/"
-      },
-      {
-        onSuccess: () => {
-          router.push('/')
+          email: data.email,
+          password: data.password,
+          callbackURL: "/"
         },
-        onError: (ctx) => {
-          toast.error(ctx.error.message);
+        {
+          onSuccess: () => {
+            router.push('/')
+          },
+          onError: (ctx) => {
+            toast.error(ctx.error.message);
+          }
         }
-      }
       )
     } catch (error) {
       toast.error('An error occurred');
     }
   };
+
+  const signInGithub = async () => {
+    await authClient.signIn.social({
+      provider: "github"
+    }, {
+      onSuccess: () => {
+        router.push('/')
+      },
+      onError: (ctx) => {
+        toast.error(ctx.error.message);
+      }
+    })
+  }
+  const signInGoogle = async () => {
+    await authClient.signIn.social({
+      provider: "google"
+    }, {
+      onSuccess: () => {
+        router.push('/')
+      },
+      onError: (ctx) => {
+        toast.error(ctx.error.message);
+      }
+    })
+  }
 
   const isPending = form.formState.isSubmitting;
 
@@ -75,63 +100,66 @@ export const LoginForm = () => {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} >
-            <div className='grid gap-6'>
-              <div className='flex flex-col gap-4'>
-                <Button variant="outline"
-                  className='w-full'
-                  type="button"
-                  disabled={isPending}
-                >
-                  <Image  src="/logos/github.svg" alt="Github Logo" width={20} height={20} />
-                  Continue with Github
-                </Button>
-                <Button variant="outline"
-                  className='w-full'
-                  type="button"
-                  disabled={isPending}
-                >
-                  <Image  src="/logos/google.svg" alt="Google Logo" width={20} height={20} />
-
-                  Continue with Google
-                </Button>
-              </div>
               <div className='grid gap-6'>
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="name@example.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="********" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                 <Button type="submit" className='w-full' disabled={isPending}>Login</Button>
-              </div>
-              <div className='text-center text-sm'>
-                Don&apos;t have an account? {" "}
-                <Link href="/signup" className='underline underline-offset-4'>
-                  Sign up
-                </Link>
+                <div className='flex flex-col gap-4'>
+                  <Button variant="outline"
+                    className='w-full'
+                    type="button"
+                    onClick={signInGithub}
+                    disabled={isPending}
+                  >
+                    <Image src="/logos/github.svg" alt="Github Logo" width={20} height={20} />
+                    Continue with Github
+                  </Button>
+                  <Button variant="outline"
+                    className='w-full'
+                    type="button"
+                    onClick={signInGoogle}
 
+                    disabled={isPending}
+                  >
+                    <Image src="/logos/google.svg" alt="Google Logo" width={20} height={20} />
+
+                    Continue with Google
+                  </Button>
+                </div>
+                <div className='grid gap-6'>
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input placeholder="name@example.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input type="password" placeholder="********" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" className='w-full' disabled={isPending}>Login</Button>
+                </div>
+                <div className='text-center text-sm'>
+                  Don&apos;t have an account? {" "}
+                  <Link href="/signup" className='underline underline-offset-4'>
+                    Sign up
+                  </Link>
+
+                </div>
               </div>
-            </div>
 
 
             </form>
