@@ -5,6 +5,7 @@ import { generateText } from "ai"
 import { NonRetriableError } from "inngest";
 import { anthropicChannel } from "@/inngest/channels/anthropic";
 import prisma from "@/lib/db";
+import { decrypt } from "@/lib/encryption";
 
 Handlebars.registerHelper("json", (ctx) => {
     const jsonString = JSON.stringify(ctx, null, 2)
@@ -85,7 +86,7 @@ export const anthropicExecutor: NodeExecutor<AnthropicData> = async ({
     const userPrompt = Handlebars.compile(data.userPrompt)(context)
 
     const anthropic = createAnthropic({
-        apiKey: credential.value,
+        apiKey: decrypt(credential.value),
     })
 
     try {

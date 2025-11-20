@@ -27,19 +27,21 @@ export const ExecutionView = ({ executionId }: { executionId: string }) => {
     : null
 
   return (
-    <Card className="shadow-noe">
-      <CardHeader>
+    <Card className="shadow-none">
+      <CardHeader className="flex items-center">
         <div className="flex items-center gap-3">
           {
             getStatusIcon(execution.status)
           }
         </div>
-        <CardTitle>
-          {formatStatus(execution.status)}
-        </CardTitle>
-        <CardDescription>
-          Execution for {execution.workflow.name}
-        </CardDescription>
+        <div>
+          <CardTitle>
+            {formatStatus(execution.status)}
+          </CardTitle>
+          <CardDescription>
+            Execution for {execution.workflow.name}
+          </CardDescription>
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -48,9 +50,11 @@ export const ExecutionView = ({ executionId }: { executionId: string }) => {
             <p className="text-sm font-medium text-muted-foreground">
               Workflow
             </p>
-            <Link prefetch href={`workflows/${execution.workflowId}`} >
-              {execution.workflow.name}
-            </Link>
+            <Button variant="link" className="p-0" asChild>
+              <Link prefetch href={`workflows/${execution.workflowId}`} >
+                {execution.workflow.name}
+              </Link>
+            </Button>
           </div>
 
 

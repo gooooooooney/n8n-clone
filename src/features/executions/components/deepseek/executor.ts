@@ -5,6 +5,7 @@ import { generateText } from "ai"
 import { NonRetriableError } from "inngest";
 import prisma from "@/lib/db";
 import { deepseekChannel } from "@/inngest/channels/deepseek";
+import { decrypt } from "@/lib/encryption";
 
 Handlebars.registerHelper("json", (ctx) => {
     const jsonString = JSON.stringify(ctx, null, 2)
@@ -84,7 +85,7 @@ export const deepseekExecutor: NodeExecutor<DeepseekData> = async ({
 
 
     const deepseek = createDeepSeek({
-        apiKey: credential.value,
+        apiKey: decrypt(credential.value),
     })
 
     try {
