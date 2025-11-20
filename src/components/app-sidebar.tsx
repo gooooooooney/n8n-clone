@@ -27,7 +27,7 @@ const menuItems = [
         url: "/executions"
       },
     ]
-   }
+  }
 ]
 
 export const AppSidebar = () => {
@@ -43,7 +43,7 @@ export const AppSidebar = () => {
           <SidebarMenuButton asChild className="gap-x-4 h-10 px-4">
             <Link prefetch href="/">
               <Image src="/logos/logo.svg" alt="Logo" width={30} height={30} />
-              <span className="text-sm font-semibold">Nodebase</span>
+              <span className="text-sm font-semibold">BlockNode</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
@@ -54,27 +54,27 @@ export const AppSidebar = () => {
             <SidebarGroup key={group.title}>
               <SidebarGroupContent>
                 <SidebarMenu>
-                    {
-                      group.items.map(item => (
-                        <SidebarMenuItem key={item.title} >
-                          <SidebarMenuButton
-                            tooltip={item.title}
-                            isActive={
-                              item.url === "/"
+                  {
+                    group.items.map(item => (
+                      <SidebarMenuItem key={item.title} >
+                        <SidebarMenuButton
+                          tooltip={item.title}
+                          isActive={
+                            item.url === "/"
                               ? pathname == "/"
                               : pathname.startsWith(item.url)
-                            }
-                            asChild
-                            className='gap-x-4 h-10 px-4'
-                          >
-                            <Link href={item.url} prefetch>
-                              <item.icon className='size-4'/>
-                              <span className='text-sm'>{item.title}</span>
-                            </Link>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      ))
-                    }
+                          }
+                          asChild
+                          className='gap-x-4 h-10 px-4'
+                        >
+                          <Link href={item.url} prefetch>
+                            <item.icon className='size-4' />
+                            <span className='text-sm'>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))
+                  }
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
@@ -88,9 +88,9 @@ export const AppSidebar = () => {
             <SidebarMenuItem>
               <SidebarMenuButton
                 tooltip="Upgade to Pro"
-               onClick={() => {
-                 authClient.checkout({slug: "pro"})
-               }}
+                onClick={() => {
+                  authClient.checkout({ slug: "pro" })
+                }}
                 className="gap-x-4 h-10 px-4">
                 <StarIcon className='size-4' />
                 <span className='text-sm'>Upgrade to Pro</span>
@@ -113,15 +113,15 @@ export const AppSidebar = () => {
         <SidebarMenuItem>
           <SidebarMenuButton
             tooltip="Sign out"
-           onClick={() => {
-             authClient.signOut({
-               fetchOptions: {
-                 onSuccess() {
-                   router.push('/login');
-                 }
-               }
-             })
-           }}
+            onClick={() => {
+              authClient.signOut({
+                fetchOptions: {
+                  onSuccess() {
+                    router.push('/login');
+                  }
+                }
+              })
+            }}
             className="gap-x-4 h-10 px-4">
             <LogOutIcon className='size-4' />
             <span className='text-sm'>Sign out</span>

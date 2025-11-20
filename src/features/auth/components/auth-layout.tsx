@@ -6,11 +6,11 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       <div className="flex w-full max-w-sm flex-col gap-6">
         <Link href="/" className="flex items-center self-center font-medium gap-x-2">
           <Image src="/logos/logo.svg" alt="Logo" width={30} height={30} />
-          Nodebase
+          BlockNode
         </Link>
-       {
-         children
-       }
+        {
+          children
+        }
       </div>
 
     </div>
